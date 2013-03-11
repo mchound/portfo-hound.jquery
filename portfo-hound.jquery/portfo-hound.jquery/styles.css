@@ -1,0 +1,35 @@
+﻿*
+{
+    margin: 0;
+    padding: 0;
+}
+
+body
+{
+    margin-top: 50px;
+}
+
+.container
+{
+    max-width: 960px;
+    width: 60%;
+    background-color: #ffd800;
+    margin: 0 auto;
+    height: 2000px;
+}
+
+.portfo-hound ul li div
+{
+    width: 100%;
+    height: 200px;
+    background-color: #f1f1f1;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    text-align:center;
+    padding: 20px;
+}
+
+    .portfo-hound ul li:nth-child(3) div
+    {
+        
+    }

@@ -1,0 +1,16 @@
+﻿div.portfo-hound
+{
+    width: 100%;
+}
+
+div.portfo-hound ul{
+    list-style: none;  
+    position: relative;
+}
+
+    div.portfo-hound ul li
+    {
+        float: left;
+        overflow: hidden;          
+        position: relative;
+    }
