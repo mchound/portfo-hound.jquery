@@ -41,20 +41,20 @@
         $('.portfo-hound-button').click(function () {
             var cat = $(this).data('category');
             ph.filter(ph, cat);
+            ph.calculateLayout(ph);
             ph.positionItems(ph, 'absolute');
             ph.getItemPositions(ph);
-            ph.hideItems(ph);
+            ph.hideItems(ph);            
             ph.placeItems(ph);
             ph.relocateItems(ph, function () {                
                 ph.positionItems(ph, 'relative');
             });
-            
-            
         });
     };
 
     portfohound.prototype = {
 
+        // Does fadeOut to all list items in hiddenItems array
         hideItems: function (ph) {
             $.each(ph.defs.hiddenItems, function (index, item) {
                 var $item = $(item);
@@ -62,6 +62,7 @@
             });
         },
 
+        // Moves all items in visibleItems array to new location
         relocateItems: function (ph, callback) {
             $.each(ph.defs.visibleItems, function (index, item) {
                 var $item = $(item);
@@ -74,6 +75,7 @@
             });
         },
 
+        // Sets items to position: 
         positionItems: function (ph, pos) {
             var position = pos ? pos : 'absolute';
             ph.defs.allItems.each(function (index, item) {
@@ -86,6 +88,35 @@
             });
         },        
 
+        // Get all items position
+        getAllItemPositions: function(ph){
+            ph.defs.actualItemPositions = [];
+
+            var numberOfRows = Math.round(ph.defs.visibleItems.length / ph.defs.itemsPerRow),
+                itemIndex = 0,
+                topOffset = 0;
+
+            // Loop though each row
+            for (var i = 0; i < numberOfRows; i++) {
+                var leftOffset = 0;
+                for (var q = 0; q < ph.defs.itemsPerRow; q++) {
+
+                    ph.defs.actualItemPositions.push({ top: topOffset, left: leftOffset });
+
+                    var $item = $(ph.defs.visibleItems[itemIndex]),
+                        itemHeight = $item.height(),
+                        itemWidth = (ph.defs.itemWidth / 100) * ph.defs.containerWidth,
+                        itemMargin = (ph.settings.itemMargin / 100) * ph.defs.containerWidth;
+
+                    q == 0 ? leftOffset += itemWidth : leftOffset += itemWidth + itemMargin;
+
+                    itemIndex++;
+                }
+                topOffset += itemHeight + itemMargin;
+            }
+        },        
+
+        // Gets position of visible items
         getItemPositions: function (ph) {
             ph.defs.itemPositions = [];
 
@@ -113,6 +144,7 @@
             }
         },
 
+        // Puts filtered items in visibleItems and the rest in hiddenItems
         filter: function (ph, category) {
             ph.defs.visibleItems = [];
             ph.defs.hiddenItems = [];
@@ -128,6 +160,7 @@
             });
         },
 
+        // Calcultaes items per row
         calculateLayout: function (ph) {
             var itemsPerRow = ph.settings.itemsPerRow,
                 itemActualWidth = 0;
@@ -146,6 +179,7 @@
             console.log('Layout calculation finished and resulted in: ' + ph.defs.itemsPerRow + ' on each row. Item width: ' + ph.defs.itemWidth + '%');
         },
 
+        // Initial placement of items
         placeItems: function (ph) {
             var numberOfRows = Math.round(ph.defs.visibleItems.length / ph.defs.itemsPerRow),
                 itemIndex = 0;
@@ -217,3 +251,14 @@ if (!Array.prototype.indexOf) {
         return -1;
     };
 }
+
+Array.prototype.$indexOf = function ($object) {
+    var index = -1;
+    $.each(this, function (i, k) {
+        if ($(k).is($object)) {
+            index = i;
+            return false;
+        }
+    });
+    return index;
+};
