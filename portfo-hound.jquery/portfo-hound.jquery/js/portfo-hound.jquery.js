@@ -17,8 +17,8 @@
             allItems: $(ph.list).children('li'),
             visibleItems: $(ph.list).children('li'),
             hiddenItems: [],
-            itemPositions: [],
-            actualItemPositions: []
+            visibleItemPositions: [],
+            allItemPositions: []
         };
 
         console.log('Container width: ' + ph.$container.width());
@@ -26,7 +26,7 @@
         // Start
         ph.calculateLayout(ph);
         ph.placeItems(ph);
-        ph.getItemPositions(ph);
+        ph.getAllItemPositions(ph);
         ph.filter(ph);
 
         // Bind to window resize event
@@ -34,7 +34,7 @@
             ph.defs.containerWidth = ph.$container.width();
             ph.calculateLayout(ph);
             ph.placeItems(ph);
-            ph.getItemPositions(ph);
+            ph.getItemPositions(ph);            
         });
 
         // Bind portfo-houd-buttons
@@ -65,11 +65,16 @@
         // Moves all items in visibleItems array to new location
         relocateItems: function (ph, callback) {
             $.each(ph.defs.visibleItems, function (index, item) {
-                var $item = $(item);
+                var $item = $(item),
+                    top = ph.defs.visibleItemPositions[index].top,
+                    left = ph.defs.visibleItemPositions[index].left;
+
                 $item.animate({
-                    top: ph.defs.itemPositions[index].top,
-                    left: ph.defs.itemPositions[index].left
+                    top: top,
+                    left: left
                 }, 600, function () {
+                    itemIndex = $.makeArray(ph.defs.allItems).$indexOf($item);
+                    itemIndex != -1 ? ph.defs.allItemPositions[itemIndex] = { top: top, left: left } : false;
                     index == ph.defs.visibleItems.length - 1 ? callback() : false;
                 });
             });
@@ -82,17 +87,17 @@
                 var $item = $(item);
                 $item.css({
                     position: position,
-                    top: position == 'absolute' ? ph.defs.itemPositions[index].top : 0,
-                    left: position == 'absolute' ? ph.defs.itemPositions[index].left : 0
+                    top: position == 'absolute' ? ph.defs.allItemPositions[index].top : 0,
+                    left: position == 'absolute' ? ph.defs.allItemPositions[index].left : 0
                 });
             });
         },        
 
         // Get all items position
         getAllItemPositions: function(ph){
-            ph.defs.actualItemPositions = [];
+            ph.defs.allItemPositions = [];
 
-            var numberOfRows = Math.round(ph.defs.visibleItems.length / ph.defs.itemsPerRow),
+            var numberOfRows = Math.round(ph.defs.allItems.length / ph.defs.itemsPerRow),
                 itemIndex = 0,
                 topOffset = 0;
 
@@ -101,9 +106,9 @@
                 var leftOffset = 0;
                 for (var q = 0; q < ph.defs.itemsPerRow; q++) {
 
-                    ph.defs.actualItemPositions.push({ top: topOffset, left: leftOffset });
+                    ph.defs.allItemPositions.push({ top: topOffset, left: leftOffset });
 
-                    var $item = $(ph.defs.visibleItems[itemIndex]),
+                    var $item = $(ph.defs.allItems[itemIndex]),
                         itemHeight = $item.height(),
                         itemWidth = (ph.defs.itemWidth / 100) * ph.defs.containerWidth,
                         itemMargin = (ph.settings.itemMargin / 100) * ph.defs.containerWidth;
@@ -118,7 +123,7 @@
 
         // Gets position of visible items
         getItemPositions: function (ph) {
-            ph.defs.itemPositions = [];
+            ph.defs.visibleItemPositions = [];
 
             var numberOfRows = Math.round(ph.defs.visibleItems.length / ph.defs.itemsPerRow),
                 itemIndex = 0,
@@ -129,7 +134,7 @@
                 var leftOffset = 0;
                 for (var q = 0; q < ph.defs.itemsPerRow; q++) {
 
-                    ph.defs.itemPositions.push({ top: topOffset, left: leftOffset });
+                    ph.defs.visibleItemPositions.push({ top: topOffset, left: leftOffset });
 
                     var $item = $(ph.defs.visibleItems[itemIndex]),
                         itemHeight = $item.height(),
