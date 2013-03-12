@@ -41,7 +41,7 @@
         $('.portfo-hound-button').click(function () {
             var cat = $(this).data('category');
             ph.filter(ph, cat);
-            ph.calculateLayout(ph);
+            ph.settings.tryToFillRow ? ph.calculateLayout(ph) : null;
             ph.positionItems(ph, 'absolute');
             ph.getItemPositions(ph);
             ph.hideItems(ph);            
@@ -223,7 +223,8 @@
             initialCategory: 'all',        
             itemsPerRow: 4,
             itemMargin: 2,
-            itemMinWidth: 200
+            itemMinWidth: 200,
+            tryToFillRow: false
         }, options);
 
         return this.each(function () {
